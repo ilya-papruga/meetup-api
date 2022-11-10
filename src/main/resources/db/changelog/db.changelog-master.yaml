@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create-meetup_api-schema.sql
+  - include:
+      file: db/changelog/changeset/create-meetup-table.sql

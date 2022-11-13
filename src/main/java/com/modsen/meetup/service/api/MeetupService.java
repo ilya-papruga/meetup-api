@@ -1,5 +1,6 @@
 package com.modsen.meetup.service.api;
 
+import com.modsen.meetup.dto.filter.Filter;
 import com.modsen.meetup.dto.MeetupUpdate;
 import com.modsen.meetup.entity.Meetup;
 import com.modsen.meetup.dto.MeetupCreate;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Validated
 public interface MeetupService {
 
-    List<Meetup> readAll ();
+    List<Meetup> readAll (Filter filter);
     Meetup readOne (UUID uuid);
     Meetup create (@Valid MeetupCreate dto);
     Meetup update (UUID uuid, @Valid MeetupUpdate dto, LocalDateTime dtUpdate);

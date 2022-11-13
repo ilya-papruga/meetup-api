@@ -1,10 +1,12 @@
 package com.modsen.meetup.service;
 
+import com.modsen.meetup.dto.filter.Filter;
 import com.modsen.meetup.repository.api.MeetupRepository;
 import com.modsen.meetup.dto.MeetupCreate;
 import com.modsen.meetup.dto.MeetupUpdate;
 import com.modsen.meetup.entity.Meetup;
 import com.modsen.meetup.service.api.MeetupService;
+import com.modsen.meetup.validation.api.FilterValidation;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +19,21 @@ public class MeetupServiceImpl implements MeetupService {
 
     private final MeetupRepository repository;
     private final ConversionService conversionService;
+    private final FilterValidation filterValidation;
 
-    public MeetupServiceImpl(MeetupRepository repository, ConversionService conversionService) {
+    public MeetupServiceImpl(MeetupRepository repository, ConversionService conversionService, FilterValidation filterValidation) {
         this.repository = repository;
         this.conversionService = conversionService;
+        this.filterValidation = filterValidation;
     }
 
-    public List<Meetup> readAll() {
+    public List<Meetup> readAll(Filter filter) {
 
-        return repository.findAll();
+        if (filterValidation.isEmpty(filter))
+        {
+            return repository.findAll();
+        }
+        return repository.findAllSorted(filter);
     }
 
     public Meetup readOne(UUID uuid) {

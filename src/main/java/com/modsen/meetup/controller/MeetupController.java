@@ -1,5 +1,6 @@
 package com.modsen.meetup.controller;
 
+import com.modsen.meetup.dto.filter.Filter;
 import com.modsen.meetup.dto.MeetupCreate;
 import com.modsen.meetup.dto.MeetupRead;
 import com.modsen.meetup.dto.MeetupUpdate;
@@ -33,11 +34,17 @@ public class MeetupController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MeetupRead>> getAllMeetups() {
+    public ResponseEntity<List<MeetupRead>> getAllMeetups(@RequestParam(required = false) String topic,
+                                                          @RequestParam(required = false) String organizer,
+                                                          @RequestParam(required = false) Long date_time,
+                                                          @RequestParam(required = false) String sorting_field,
+                                                          @RequestParam(required = false) String sorting_type) {
 
-        return ResponseEntity.ok(meetupService.readAll().stream()
-                        .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
-                        .collect(Collectors.toList()));
+        Filter filter = new Filter(topic, organizer, conversionService.convert(date_time, LocalDateTime.class), sorting_field, sorting_type);
+
+        return ResponseEntity.ok(meetupService.readAll(filter).stream()
+                .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{uuid}")
@@ -73,7 +80,7 @@ public class MeetupController {
         UUID validUUID = validator.validUUID(uuid);
         validator.validUnixTime(dt_update);
 
-        LocalDateTime lastKnowDtUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dt_update), ZoneId.systemDefault());
+        LocalDateTime lastKnowDtUpdate = conversionService.convert(dt_update, LocalDateTime.class);
 
         meetupService.delete(validUUID, lastKnowDtUpdate);
 

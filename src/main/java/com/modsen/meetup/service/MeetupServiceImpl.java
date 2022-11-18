@@ -1,6 +1,8 @@
 package com.modsen.meetup.service;
 
+import com.modsen.meetup.dto.MeetupRead;
 import com.modsen.meetup.dto.filter.Filter;
+import com.modsen.meetup.dto.filter.FilterString;
 import com.modsen.meetup.repository.api.MeetupRepository;
 import com.modsen.meetup.dto.MeetupCreate;
 import com.modsen.meetup.dto.MeetupUpdate;
@@ -10,9 +12,8 @@ import com.modsen.meetup.validation.api.FilterValidation;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MeetupServiceImpl implements MeetupService {
@@ -27,42 +28,43 @@ public class MeetupServiceImpl implements MeetupService {
         this.filterValidation = filterValidation;
     }
 
-    public List<Meetup> readAll(Filter filter) {
+    public List<MeetupRead> readAll(FilterString filter) {
 
-        if (filterValidation.isEmpty(filter))
-        {
-            return repository.findAll();
+        if (filterValidation.isEmpty(filter)) {
+            return repository.findAll().stream()
+                    .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
+                    .collect(Collectors.toList());
         }
-        return repository.findAllSorted(filter);
+
+        return repository.findAllSorted(conversionService.convert(filter, Filter.class)).stream()
+                .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
+                .collect(Collectors.toList());
     }
 
-    public Meetup readOne(UUID uuid) {
+    public MeetupRead readOne(Long id) {
 
-        return this.repository.findOne(uuid);
-
-    }
-
-    public Meetup create(MeetupCreate dto) {
-
-        return repository.createNew(conversionService.convert(dto, Meetup.class));
+        return conversionService.convert(repository.findOne(id), MeetupRead.class);
 
     }
 
-    public Meetup update(UUID uuid, MeetupUpdate dto, LocalDateTime dtUpdate) {
+    public MeetupRead create(MeetupCreate dto) {
 
-        readOne(uuid);
-
-        repository.updateByUuid(uuid, dto, dtUpdate);
-
-        return readOne(uuid);
+        return conversionService.convert(repository.createNew(conversionService.convert(dto, Meetup.class)), MeetupRead.class);
 
     }
 
-    public void delete(UUID uuid, LocalDateTime dtUpdate) {
+    public MeetupRead update(Long id, MeetupUpdate dto, Long version) {
 
-        readOne(uuid);
+        readOne(id);
+        repository.updateByUuid(id, dto, version);
+        return readOne(id);
 
-        repository.deleteByUuid(uuid, dtUpdate);
+    }
+
+    public void delete(Long id, Long version) {
+
+        readOne(id);
+        repository.deleteByUuid(id, version);
 
     }
 }

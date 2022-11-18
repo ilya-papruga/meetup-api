@@ -2,17 +2,12 @@ package com.modsen.meetup.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 @Entity
 @Table (schema = "meetup_api", name = "meetup")
 public class Meetup {
     @Id
-    private UUID uuid;
-    @Column(name = "dt_create")
-    private LocalDateTime dtCreate;
-    @Version
-    @Column(name = "dt_update")
-    private LocalDateTime dtUpdate;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String topic;
     private String description;
     private String organizer;
@@ -20,34 +15,20 @@ public class Meetup {
     private LocalDateTime dateTime;
     @Column(name = "place")
     private String place;
+    @Version
+    private Long version;
 
     public Meetup() {
     }
 
-
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public LocalDateTime getDtCreate() {
-        return dtCreate;
-    }
-
-    public void setDtCreate(LocalDateTime dtCreate) {
-        this.dtCreate = dtCreate;
-    }
-
-    public LocalDateTime getDtUpdate() {
-        return dtUpdate;
-    }
-
-    public void setDtUpdate(LocalDateTime dtUpdate) {
-        this.dtUpdate = dtUpdate;
-    }
 
     public String getTopic() {
         return topic;
@@ -87,5 +68,13 @@ public class Meetup {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

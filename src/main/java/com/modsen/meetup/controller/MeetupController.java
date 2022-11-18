@@ -1,92 +1,63 @@
 package com.modsen.meetup.controller;
 
-import com.modsen.meetup.dto.filter.Filter;
 import com.modsen.meetup.dto.MeetupCreate;
 import com.modsen.meetup.dto.MeetupRead;
 import com.modsen.meetup.dto.MeetupUpdate;
+import com.modsen.meetup.dto.filter.FilterString;
 import com.modsen.meetup.service.api.MeetupService;
-import com.modsen.meetup.validation.api.PathVariableValidator;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/meetup")
 public class MeetupController {
 
     private final MeetupService meetupService;
-    private final ConversionService conversionService;
-    private final PathVariableValidator validator;
 
-
-    public MeetupController(MeetupService meetupService, ConversionService conversionService, PathVariableValidator validator) {
+    public MeetupController(MeetupService meetupService) {
         this.meetupService = meetupService;
-        this.conversionService = conversionService;
-        this.validator = validator;
     }
 
     @GetMapping
     public ResponseEntity<List<MeetupRead>> getAllMeetups(@RequestParam(required = false) String topic,
                                                           @RequestParam(required = false) String organizer,
-                                                          @RequestParam(required = false) Long date_time,
+                                                          @RequestParam(required = false) String date_time,
                                                           @RequestParam(required = false) String sorting_field,
                                                           @RequestParam(required = false) String sorting_type) {
 
-        Filter filter = new Filter(topic, organizer, conversionService.convert(date_time, LocalDateTime.class), sorting_field, sorting_type);
-
-        return ResponseEntity.ok(meetupService.readAll(filter).stream()
-                .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(meetupService.readAll(new FilterString(topic, organizer, date_time, sorting_field, sorting_type)));
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<MeetupRead> getOneMeetup(@PathVariable String uuid) {
+    @GetMapping("/{id}")
+    public ResponseEntity<MeetupRead> getOneMeetup(@PathVariable Long id) {
 
-        UUID validUUID = validator.validUUID(uuid);
-
-        return ResponseEntity.ok(conversionService.convert(meetupService.readOne(validUUID), MeetupRead.class));
+        return ResponseEntity.ok(meetupService.readOne(id));
 
     }
 
     @PostMapping
     public ResponseEntity<MeetupRead> createMeetup(@RequestBody MeetupCreate dto) {
-        return new ResponseEntity<>(conversionService.convert((meetupService.create(dto)), MeetupRead.class), HttpStatus.CREATED);
+
+        return new ResponseEntity<>((meetupService.create(dto)), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{uuid}/dt_update/{dt_update}")
-    public ResponseEntity<MeetupRead> updateMeetup(@PathVariable String uuid, @RequestBody MeetupUpdate dto, @PathVariable Long dt_update) {
-        UUID validUUID = validator.validUUID(uuid);
-        validator.validUnixTime(dt_update);
+    @PutMapping("/{id}/version/{version}")
+    public ResponseEntity<MeetupRead> updateMeetup(@PathVariable Long id, @RequestBody MeetupUpdate dto, @PathVariable Long version) {
 
-        LocalDateTime lastKnowDtUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dt_update), ZoneId.systemDefault());
+        meetupService.update(id, dto, version);
 
-        meetupService.update(validUUID, dto, lastKnowDtUpdate);
-
-        return getOneMeetup(uuid);
-
+        return getOneMeetup(id);
     }
 
-    @DeleteMapping("/{uuid}/dt_update/{dt_update}")
-    public ResponseEntity<Void> deleteMeetup(@PathVariable String uuid, @PathVariable Long dt_update) {
+    @DeleteMapping("/{id}/version/{version}")
+    public ResponseEntity<Void> deleteMeetup(@PathVariable Long id, @PathVariable Long version) {
 
-        UUID validUUID = validator.validUUID(uuid);
-        validator.validUnixTime(dt_update);
+        meetupService.delete(id, version);
 
-        LocalDateTime lastKnowDtUpdate = conversionService.convert(dt_update, LocalDateTime.class);
-
-        meetupService.delete(validUUID, lastKnowDtUpdate);
-
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 
 }

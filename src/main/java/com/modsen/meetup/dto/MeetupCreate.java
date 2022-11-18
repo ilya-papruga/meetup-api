@@ -1,8 +1,5 @@
 package com.modsen.meetup.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.modsen.meetup.controller.utils.json.LocalDateTimeDeserializer;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -16,7 +13,6 @@ public class MeetupCreate {
     @NotBlank
     private String organizer;
     @NotNull
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateTime;
     @NotBlank
     private String place;

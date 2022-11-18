@@ -1,9 +1,9 @@
 package com.modsen.meetup.validation.api;
 
-import com.modsen.meetup.dto.filter.Filter;
+import com.modsen.meetup.dto.filter.FilterString;
 
 public interface FilterValidation {
 
-    public boolean isEmpty (Filter filter);
+    public boolean isEmpty (FilterString filter);
 
 }

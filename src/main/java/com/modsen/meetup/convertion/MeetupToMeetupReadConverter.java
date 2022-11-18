@@ -13,14 +13,13 @@ public class MeetupToMeetupReadConverter implements Converter<Meetup, MeetupRead
 
         MeetupRead dto = new MeetupRead();
 
-        dto.setUuid(entity.getUuid());
-        dto.setDtCreate(entity.getDtCreate());
-        dto.setDtUpdate(entity.getDtUpdate());
+        dto.setId(entity.getId());
         dto.setTopic(entity.getTopic());
         dto.setDescription(entity.getDescription());
         dto.setOrganizer(entity.getOrganizer());
         dto.setDateTime(entity.getDateTime());
         dto.setPlace(entity.getPlace());
+        dto.setVersion(entity.getVersion());
 
         return dto;
 

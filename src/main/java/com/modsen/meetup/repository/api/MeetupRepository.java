@@ -13,9 +13,9 @@ public interface MeetupRepository {
     List<Meetup> findAll ();
 
     List<Meetup> findAllSorted(Filter filter);
-    Meetup findOne(UUID uuid);
+    Meetup findOne(Long id);
     Meetup createNew (Meetup meetup);
-    void updateByUuid (UUID uuid, MeetupUpdate dto, LocalDateTime dtUpdate);
-    void deleteByUuid (UUID uuid, LocalDateTime dtUpdate);
+    void updateByUuid (Long id, MeetupUpdate dto, Long version);
+    void deleteByUuid (Long id, Long version);
 
 }

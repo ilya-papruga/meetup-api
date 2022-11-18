@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public class MeetupRepositoryImpl implements MeetupRepository {
@@ -46,13 +44,13 @@ public class MeetupRepositoryImpl implements MeetupRepository {
     }
 
 
-    public Meetup findOne(UUID uuid) {
+    public Meetup findOne(Long id) {
 
         EntityManager entityManager = managerFactory.createEntityManager();
 
         Meetup entity = entityManager
-                .createQuery("from Meetup where uuid = :uuid", Meetup.class)
-                .setParameter("uuid", uuid)
+                .createQuery("from Meetup where id = :id", Meetup.class)
+                .setParameter("id", id)
                 .getSingleResult();
 
         entityManager.close();
@@ -73,15 +71,15 @@ public class MeetupRepositoryImpl implements MeetupRepository {
         return meetup;
     }
 
-    public void updateByUuid(UUID uuid, MeetupUpdate dto, LocalDateTime dtUpdate) {
+    public void updateByUuid(Long id, MeetupUpdate dto, Long version) {
 
         EntityManager entityManager = managerFactory.createEntityManager();
 
         entityManager.getTransaction().begin();
 
-        Meetup meetup = entityManager.find(Meetup.class, uuid);
+        Meetup meetup = entityManager.find(Meetup.class, id);
 
-        if (!meetup.getDtUpdate().equals(dtUpdate)) {
+        if (!meetup.getVersion().equals(version)) {
             throw new IllegalArgumentException("the entity has already been updated");
         }
 
@@ -98,15 +96,15 @@ public class MeetupRepositoryImpl implements MeetupRepository {
 
     }
 
-    public void deleteByUuid(UUID uuid, LocalDateTime dtUpdate) {
+    public void deleteByUuid(Long id, Long version) {
 
         EntityManager entityManager = managerFactory.createEntityManager();
 
         entityManager.getTransaction().begin();
 
-        Meetup meetup = entityManager.find(Meetup.class, uuid);
+        Meetup meetup = entityManager.find(Meetup.class, id);
 
-        if (!meetup.getDtUpdate().equals(dtUpdate)) {
+        if (!meetup.getVersion().equals(version)) {
             throw new IllegalArgumentException("the entity has already been deleted or updated");
         }
 

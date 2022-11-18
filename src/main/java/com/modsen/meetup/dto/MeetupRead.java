@@ -1,7 +1,7 @@
 package com.modsen.meetup.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.modsen.meetup.controller.utils.json.LocalDateTimeSerializer;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,43 +9,25 @@ import java.util.UUID;
 
 public class MeetupRead {
 
-    private UUID uuid;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime dtCreate;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime dtUpdate;
+    private Long id;
     private String topic;
     private String description;
     private String organizer;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime dateTime;
     private String place;
+
+    private Long version;
 
     public MeetupRead() {
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public LocalDateTime getDtCreate() {
-        return dtCreate;
-    }
-
-    public void setDtCreate(LocalDateTime dtCreate) {
-        this.dtCreate = dtCreate;
-    }
-
-    public LocalDateTime getDtUpdate() {
-        return dtUpdate;
-    }
-
-    public void setDtUpdate(LocalDateTime dtUpdate) {
-        this.dtUpdate = dtUpdate;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTopic() {
@@ -86,5 +68,13 @@ public class MeetupRead {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

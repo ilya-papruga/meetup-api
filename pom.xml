@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.modsen.meetup</groupId>
   <artifactId>meetup-api</artifactId>
-  <packaging>jar</packaging>
   <version>1.0.0</version>
+  <packaging>jar</packaging>
 
   <name>meetup-api</name>
 
@@ -13,6 +13,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <parent>
@@ -60,6 +61,11 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>meetup-api</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 </project>

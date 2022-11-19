@@ -28,7 +28,7 @@ public class MeetupControllerTest {
     @Test
     @Order(1)
     public void getAllTestMeetups() throws Exception {
-        this.mockMvc.perform(get("/meetup"))
+        this.mockMvc.perform(get("/api/v1/meetup"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].topic").value("test1"))
@@ -38,7 +38,7 @@ public class MeetupControllerTest {
     @Test
     @Order(2)
     public void getOneTestMeetup() throws Exception {
-        this.mockMvc.perform(get("/meetup/{id}", 1))
+        this.mockMvc.perform(get("/api/v1/meetup/{id}", 1))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.topic").value("test1"));
@@ -47,7 +47,7 @@ public class MeetupControllerTest {
     @Test
     @Order(3)
     public void createTestMeetup() throws Exception {
-        mockMvc.perform(post("/meetup")
+        mockMvc.perform(post("/api/v1/meetup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content("{\"topic\":\"test3\",\"description\":\"test3\",\"organizer\":\"test3\",\"date_time\":\"2022-11-08T22:49:59\",\"place\":\"test3\"}"))
@@ -58,7 +58,7 @@ public class MeetupControllerTest {
     @Test
     @Order(4)
     public void updateTestMeetup() throws Exception {
-        mockMvc.perform(put("/meetup/{id}/version/{version}", 3, 0)
+        mockMvc.perform(put("/api/v1/meetup/{id}/version/{version}", 3, 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content("{\"topic\":\"fix_test3\",\"description\":\"fix_test3\",\"organizer\":\"fix_test3\",\"date_time\":\"2022-11-08T22:49:59\",\"place\":\"fix_test3\"}"))
@@ -69,7 +69,7 @@ public class MeetupControllerTest {
     @Test
     @Order(5)
     public void CheckUpdatedTestMeetup() throws Exception {
-        this.mockMvc.perform(get("/meetup/{id}", 3))
+        this.mockMvc.perform(get("/api/v1/meetup/{id}", 3))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.topic").value("fix_test3"))
@@ -79,7 +79,7 @@ public class MeetupControllerTest {
     @Test
     @Order(6)
     public void DeleteUpdatedTestMeetup() throws Exception {
-        mockMvc.perform(delete("/meetup/{id}/version/{version}", 3, 1))
+        mockMvc.perform(delete("/api/v1/meetup/{id}/version/{version}", 3, 1))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }

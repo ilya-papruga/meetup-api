@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meetup")
+@RequestMapping("/api/v1/meetup")
 public class MeetupController {
 
     private final MeetupService meetupService;

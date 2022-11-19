@@ -1,0 +1,40 @@
+version: '3.5'
+services:
+  db:
+    build: postgresql
+    image: meetup_postgresql:1.0.0
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    networks:
+      - meetup_ntwrk
+  pgadmin:
+    build: pgadmin
+    image: meetup_pgadmin:1.0.0
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "81:80"
+    networks:
+      - meetup_ntwrk
+
+  meetup-api:
+    build:
+      dockerfile: Dockerfile
+    image: meetup-api:1.0.0
+    networks:
+      - meetup_ntwrk
+
+  proxy:
+    build: proxy
+    image: meetup_proxy:1.0.0
+    ports:
+      - "80:80"
+    networks:
+      - meetup_ntwrk
+networks:
+    meetup_ntwrk:
+      name: meetup_ntwrk

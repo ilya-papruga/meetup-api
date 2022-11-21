@@ -1,14 +1,16 @@
 package com.modsen.meetup.controller;
 
-import com.modsen.meetup.configuration.IntegrationTestConfiguration;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.sql.DataSource;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -17,13 +19,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = {IntegrationTestConfiguration.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MeetupControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private DataSource dataSource;
+
+    @BeforeAll
+    void initDatabase() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("/reset-meetup-before.sql"));
+        populator.execute(dataSource);
+    }
 
     @Test
     @Order(1)

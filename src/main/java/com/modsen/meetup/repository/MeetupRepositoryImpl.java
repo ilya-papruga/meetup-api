@@ -4,10 +4,15 @@ import com.modsen.meetup.dto.filter.Filter;
 import com.modsen.meetup.entity.Meetup;
 import com.modsen.meetup.repository.api.MeetupRepository;
 import com.modsen.meetup.dto.MeetupUpdate;
+import org.hibernate.loader.custom.sql.SQLQueryParser;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.ServerErrorMessage;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
@@ -143,17 +148,30 @@ public class MeetupRepositoryImpl implements MeetupRepository {
 
         if (filter.getSortingField() != null) {
 
+
             if (line.length() > 0) {
                 line.append(" ");
             }
 
             line.append("order by ").append(filter.getSortingField());
+        }
 
             if (filter.getSortingType() != null) {
-                line.append(" ").append(filter.getSortingType());
+
+                String sortingType = filter.getSortingType();
+
+                if (sortingType.equalsIgnoreCase("asc") || sortingType.equalsIgnoreCase("desc")) {
+
+                    line.append(" ").append(filter.getSortingType());
+
+                }
+                else {
+                    throw new NoResultException("wrong sorting type, use asc or desc");
+                }
             }
 
+            return line.toString();
         }
-        return line.toString();
     }
-}
+
+

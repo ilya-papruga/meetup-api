@@ -20,6 +20,15 @@ public class Meetup {
 
     public Meetup() {
     }
+    public Meetup(Long id, String topic, String description, String organizer, LocalDateTime dateTime, String place, Long version) {
+        this.id = id;
+        this.topic = topic;
+        this.description = description;
+        this.organizer = organizer;
+        this.dateTime = dateTime;
+        this.place = place;
+        this.version = version;
+    }
 
     public Long getId() {
         return id;

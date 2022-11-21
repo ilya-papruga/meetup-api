@@ -58,7 +58,7 @@ Request parameters (not required):
 
 *Request:*
 
-`localhost/api/v1/meetup/**1**`
+`localhost/api/v1/meetup/1`
 
 *Response:*
 ```json

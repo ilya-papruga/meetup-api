@@ -7,13 +7,13 @@ Test task for Modsen
 
 # Endpoints:
 
-| HTTP Method   | URL                                            | Description                     |
-|---------------|------------------------------------------------|---------------------------------|
-| `GET`         | localhost/api/v1/meetup/                       | Get All meetups                 |
-| `GET`         | localhost/api/v1/meetup/{id}                   | Get Meetup by ID                |
-| `POST`        | localhost/api/v1/meetup/                       | Create new Meetup               |
-| `PUT`         | localhost/api/v1/meetup/{id}/version/{version} | Update Meetup by ID and Version |
-| `DELETE`      | localhost/api/v1/meetup/{id}/version/{version} | Delete Meetup by ID and Version |
+|   HTTP Method   | URL                                            | Description                     |
+|:---------------:|------------------------------------------------|---------------------------------|
+|      `GET`      | localhost/api/v1/meetup/                       | Get All Meetups                 |
+|      `GET`      | localhost/api/v1/meetup/{id}                   | Get Meetup by ID                |
+|     `POST`      | localhost/api/v1/meetup/                       | Create new Meetup               |
+|      `PUT`      | localhost/api/v1/meetup/{id}/version/{version} | Update Meetup by ID and Version |
+|    `DELETE`     | localhost/api/v1/meetup/{id}/version/{version} | Delete Meetup by ID and Version |
 
 ## Get All meetups
 
@@ -23,12 +23,12 @@ Request parameters (not required):
 - organizer - "abc"
 - date_time - "2022-11-11T00:00:00" 
 - sorting_field - "topic" / "organizer" / "date_time"
-- sorting_type - "esc" / "desc"
+- sorting_type - "asc" / "desc"
 
 
 *Request:*
 
->localhost/api/v1/meetup/
+`localhost/api/v1/meetup/`
 
 *Response:*
 ```json
@@ -53,12 +53,12 @@ Request parameters (not required):
   }
 ]
 ```
-> 200 OK
+>200 OK
 ## Get Meetup by ID
 
 *Request:*
 
->localhost/api/v1/meetup/**1**
+`localhost/api/v1/meetup/**1**`
 
 *Response:*
 ```json
@@ -78,7 +78,7 @@ Request parameters (not required):
 
 *Request:*
 
->localhost/api/v1/meetup/
+`localhost/api/v1/meetup/`
 > 
 
 
@@ -108,9 +108,7 @@ Request parameters (not required):
 ## Update Meetup by ID and Version
 *Request:*
 
->localhost/api/v1/meetup/3/version/0
-> 
-
+`localhost/api/v1/meetup/3/version/0`
 
 ```json
 {
@@ -138,7 +136,7 @@ Request parameters (not required):
 ## Delete Meetup by ID and Version
 *Request:*
 
->localhost/api/v1/meetup/3/version/1
+`localhost/api/v1/meetup/3/version/1`
 
 *Response:*
 

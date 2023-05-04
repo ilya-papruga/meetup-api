@@ -1,6 +1,5 @@
 package com.modsen.meetup.controller.advices;
 
-
 import com.modsen.meetup.dto.error.FieldError;
 import com.modsen.meetup.dto.error.MultiplyError;
 import com.modsen.meetup.dto.error.SingleError;

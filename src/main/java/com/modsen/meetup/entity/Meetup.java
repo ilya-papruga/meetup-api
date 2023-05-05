@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import java.time.LocalDateTime;
 @Entity
-@Table(schema = "meetup_api", name = "meetup")
+@Table(name = "meetup")
 public class Meetup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

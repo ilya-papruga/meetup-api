@@ -14,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -146,7 +147,7 @@ public class MeetupRepositoryImpl implements MeetupRepository {
         }
 
         if (!Objects.isNull(dateTime)) {
-            predicates.add(cb.like(root.get("date_time"), "%" + dateTime + "%"));
+            predicates.add(cb.between(root.get("dateTime"), dateTime, dateTime));
         }
 
         if (!Objects.isNull(sortingField) && !Objects.isNull(sortingType)) {

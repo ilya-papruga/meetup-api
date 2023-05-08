@@ -36,7 +36,7 @@ public class MeetupServiceImpl implements MeetupService {
                     .collect(Collectors.toList());
         }
 
-        return repository.findAllSorted(conversionService.convert(filter, Filter.class)).stream()
+        return repository.findAllFiltered(conversionService.convert(filter, Filter.class)).stream()
                 .map(meetup -> conversionService.convert(meetup, MeetupRead.class))
                 .collect(Collectors.toList());
     }

@@ -9,7 +9,14 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class MeetupRepositoryImpl implements MeetupRepository {
@@ -30,17 +37,17 @@ public class MeetupRepositoryImpl implements MeetupRepository {
     }
 
     @Override
-    public List<Meetup> findAllSorted(Filter filter) {
+    public List<Meetup> findAllFiltered(Filter filter) {
 
         EntityManager entityManager = managerFactory.createEntityManager();
 
-        String filteredQuery = buildFilteredQuery(filter);
+        CriteriaQuery<Meetup> filteredQuery = getFilteredQuery(managerFactory.getCriteriaBuilder(), filter);
 
-        List<Meetup> entityList = entityManager.createQuery("from Meetup " + filteredQuery, Meetup.class).getResultList();
+        List<Meetup> resultList = entityManager.createQuery(filteredQuery).getResultList();
 
         entityManager.close();
 
-        return entityList;
+        return resultList;
 
     }
 
@@ -115,59 +122,51 @@ public class MeetupRepositoryImpl implements MeetupRepository {
 
     }
 
-    private static String buildFilteredQuery(Filter filter) {
-        StringBuilder line = new StringBuilder();
 
-        if (filter.getTopic() != null) {
-            line.append("topic = ").append("'").append(filter.getTopic()).append("'");
+    private CriteriaQuery<Meetup> getFilteredQuery(CriteriaBuilder cb, Filter filter) {
+
+        CriteriaQuery<Meetup> query = cb.createQuery(Meetup.class);
+        Root<Meetup> root = query.from(Meetup.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        query.select(root);
+
+        String topic = filter.getTopic();
+        String organizer = filter.getOrganizer();
+        LocalDateTime dateTime = filter.getDateTime();
+        String sortingField = filter.getSortingField();
+        String sortingType = filter.getSortingType();
+
+        if (!Objects.isNull(topic)) {
+            predicates.add(cb.like(root.get("topic"), "%" + topic + "%"));
         }
 
-        if (filter.getOrganizer() != null) {
-            if (line.length() > 0) {
-                line.append("and ");
+        if (!Objects.isNull(organizer)) {
+            predicates.add(cb.like(root.get("organizer"), "%" + organizer + "%"));
+        }
+
+        if (!Objects.isNull(dateTime)) {
+            predicates.add(cb.like(root.get("date_time"), "%" + dateTime + "%"));
+        }
+
+        if (!Objects.isNull(sortingField) && !Objects.isNull(sortingType)) {
+
+            if (sortingType.equalsIgnoreCase("asc")) {
+                query.orderBy(cb.asc(root.get(sortingField)));
             }
-            line.append("organizer = ").append("'").append(filter.getOrganizer()).append("'");
-        }
-
-        if (filter.getDateTime() != null) {
-
-            if (line.length() > 0) {
-                line.append("and ");
+            if (sortingType.equalsIgnoreCase("desc")) {
+                query.orderBy(cb.desc(root.get(sortingField)));
+            } else {
+                throw new NoResultException("wrong sorting type, use asc/desc");
             }
-
-            line.append("date_time = ").append("'").append(filter.getDateTime()).append("'");
         }
 
-        if (line.length() > 0) {
-            line.insert(0, "where ");
+        if (!predicates.isEmpty()) {
+            query.where(predicates.toArray(new Predicate[0]));
         }
+        return query;
 
-        if (filter.getSortingField() != null) {
-
-
-            if (line.length() > 0) {
-                line.append(" ");
-            }
-
-            line.append("order by ").append(filter.getSortingField());
-        }
-
-            if (filter.getSortingType() != null) {
-
-                String sortingType = filter.getSortingType();
-
-                if (sortingType.equalsIgnoreCase("asc") || sortingType.equalsIgnoreCase("desc")) {
-
-                    line.append(" ").append(filter.getSortingType());
-
-                }
-                else {
-                    throw new NoResultException("wrong sorting type, use asc or desc");
-                }
-            }
-
-            return line.toString();
-        }
     }
+}
 
 
